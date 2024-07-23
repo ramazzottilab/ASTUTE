@@ -47,18 +47,14 @@ jobs:
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
     container: ${{ matrix.config.cont }}
     ## Environment variables unique to this job.
-    
-    permissions:
-      issues: write
-      pull-requests: write
 
     strategy:
       fail-fast: false
       matrix:
         config:
           - { os: ubuntu-latest, r: 'devel', bioc: 'devel', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest"}
-          ## - { os: macOS-latest, r: 'devel', bioc: 'devel'}
-          ## - { os: windows-latest, r: 'devel', bioc: 'devel'}
+          - { os: macOS-latest, r: 'devel', bioc: 'devel'}
+          - { os: windows-latest, r: 'devel', bioc: 'devel'}
           ## Check https://github.com/r-lib/actions/tree/master/examples
           ## for examples using the http-user-agent
     env:
