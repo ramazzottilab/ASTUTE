@@ -1,0 +1,67 @@
+---
+title: "An introduction to the `ASTUTE` R package"
+author: 
+  - Daniele Ramazzotti
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+graphics: yes
+package: ASTUTE
+output:
+  BiocStyle::html_document:
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{An R package for the integration of cancer genomic and transcriptomic data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{ASTUTE,BiocStyle}
+---
+
+ASTUTE is an R package designed to integrate cancer genomic and transcriptomic data in order to perform genotype-phenotype mapping. It leverages regularized regression with LASSO penalty to uncover associations between somatic mutations and gene expression profiles.
+
+In its basic implementation, ASTUTE requires two main inputs: (i) a binary matrix where rows are patients (i.e., samples) and columns are mutations. Each cell of the matrix is 1 if the related mutation was observed in the sample; 0 otherwise. (2) a matrix with log2(x+1)-transformed normalized expression matrix for the same patients.
+
+In this vignette, we give an overview of the package by presenting some of its main functions.
+
+# Installing the ASTUTE R package
+
+The ASTUTE package can be installed from GitHub using the R package devtools as follows.
+
+```{r eval=FALSE}
+library("devtools")
+install_github("ramazzottilab/ASTUTE", ref = 'master')
+```
+
+# Changelog
+
+- *1.0.0* Package released in July 2024.
+
+# Using the ASTUTE R package
+
+We provide within the package an example dataset providing alterations and expression data for a set of selected genes from 50 lung adenocarcinoma samples from Cancer Genome Atlas Research Network. "Comprehensive molecular profiling of lung adenocarcinoma." Nature 511, no. 7511 (2014): 543.
+
+```{r}
+library("ASTUTE")
+data(datasetExample)
+```
+
+ASTUTE performs genotype-phenotype mapping by associating somatic mutations to gene expression profiles.
+
+```{r}
+set.seed(12345)
+resExample <- ASTUTE( alterations = datasetExample$alterations, 
+                      expression = datasetExample$expression, 
+                      regularization = TRUE, 
+                      nboot = NA, 
+                      num_processes = NA, 
+                      verbose = FALSE )
+print(names(resExample))
+```
+
+The output of this analysis is a a list of 7 elements: (1) input_data: list providing the input data (i.e., alterations and expression data); (2) bootstrap: results of the inference by bootstrap (i.e., alpha alterations matrix, beta matrix, and intercept estimates); (3) parameters: list with the paremeters used for the inference (i.e., regularization TRUE/FALSE and nboot); (4) goodness_fit: goodness of fit estimated as the cosine similarity comparing observations and predictions; (5) fold_changes: log2 fold changes estimates; (6) pvalues: p-values estimates; (7) qvalues: p-values estimates corrected for false discovery.
+
+In the example provided above, we did not perform bootstrap, so no p-values and q-values estimates are provided.
+
+# Current R Session
+
+```{r}
+sessionInfo()
+```
