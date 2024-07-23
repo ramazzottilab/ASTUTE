@@ -35,13 +35,6 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 
-# executables compiled from C files
-src/*.d
-src/*.o
-src/*.so
-src/agony
-
 # pkgdown local
 docs
-*.Rproj
-*.dll
+*.d
